@@ -49,7 +49,7 @@ def song_recommendation(song_name):
 
 songs_list_dict = pickle.load(open('song_list_dict.pkl', 'rb'))
 songs_list = pd.DataFrame(songs_list_dict)
-artist_list = pickle.load(open('artist.pkl', 'rb'))
+artist_list = pickle.load(open('latest_artist.pkl', 'rb'))
 
 similar = pickle.load(open('similar.pkl', 'rb'))
 
@@ -86,7 +86,7 @@ with col1:
 with col2:
     st.subheader("Artist Recommendation:")
     artist_name_selection = st.selectbox(
-        "Select a Artist", artist_list['artist'].values
+        "Select a Artist", artist_list.values
     )
 
 
