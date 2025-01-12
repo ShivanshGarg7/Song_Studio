@@ -86,7 +86,7 @@ with col1:
 with col2:
     st.subheader("Artist Recommendation:")
     artist_name_selection = st.selectbox(
-        "Select a Artist", artist_list.values
+        "Select a Artist", artist_list
     )
 
 
