@@ -70,7 +70,7 @@ st.markdown(
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-col1, spacer, col2 = st.columns([2,2,2])
+col1, col2 = st.columns([1,2])
 with col1:
     st.subheader("Song Recommendation:")
     song_name_selection = st.selectbox(
@@ -94,7 +94,6 @@ with col2:
         url =  f"https://api.spotify.com/v1/search"
         headers = get_auth_header(token)
         query = f"?q={artist_name}&type=artist&limit=1"
-
         query_url = url + query
         result = get(query_url, headers=headers)
         json_result = json.loads(result.content)["artists"]["items"]
@@ -109,8 +108,17 @@ with col2:
         url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
         headers = get_auth_header(token)
         result = get(url, headers=headers)
-        json_result = json.loads(result.content)["tracks"]
-        return json_result
+        json_result = result.json()
+        tracks_info = []
+        for track in json_result['tracks']:
+            track_name = track['name']
+            track_image = track['album']['images'][0]['url']
+            tracks_info.append({
+                'name': track_name,
+              'image_url': track_image
+        })
+        return tracks_info
+
 
 
     token = get_token()
@@ -122,8 +130,17 @@ with col2:
 
     if st.button("Get Artist Recommendation:"):
         st.write("Here are some Recommendation:")
+        num_columns = 4
+        cols = st.columns(num_columns)
         for idx, song in enumerate(songs):
-            st.write(f"- {song['name']}")
+            with cols[idx % num_columns]:
+                st.image(song['image_url'], width=500)
+                st.write(f"**{song['name']}**")
+            # col1, col2 = st.columns([1,4])
+            # with col1:
+            #     st.write(f"- {song['name']}")
+            # with col2:
+            #     st.image(song['image_url'],width=180)
 
 
 
