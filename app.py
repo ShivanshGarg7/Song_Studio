@@ -70,27 +70,15 @@ st.markdown(
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-col1, col2 = st.columns([1,2])
-with col1:
-    st.subheader("Song Recommendation:")
-    song_name_selection = st.selectbox(
-        "Select a Song", songs_list['name'].values
-    )
-    if st.button('Get Recommendation Songs'):
-        recommended_songs = song_recommendation(song_name_selection)
-        st.write("Here are some Recommendation:")
-        for i in recommended_songs:
-            st.write("*", i)
 
 
-with col2:
-    st.subheader("Artist Recommendation:")
-    artist_name_selection = st.selectbox(
+st.subheader("Artist Recommendation:")
+artist_name_selection = st.selectbox(
         "Select a Artist", artist_list
     )
 
 
-    def artist_search(token, artist_name):
+def artist_search(token, artist_name):
         url =  f"https://api.spotify.com/v1/search"
         headers = get_auth_header(token)
         query = f"?q={artist_name}&type=artist&limit=1"
@@ -104,7 +92,7 @@ with col2:
 
 
 
-    def get_songs_by_artist(token, artist_id):
+def get_songs_by_artist(token, artist_id):
         url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
         headers = get_auth_header(token)
         result = get(url, headers=headers)
@@ -123,30 +111,37 @@ with col2:
 
 
 
-    token = get_token()
+token = get_token()
     
-    result = artist_search(token, artist_name_selection)
-    artist_id = result["id"]
-    songs = get_songs_by_artist(token, artist_id)
+result = artist_search(token, artist_name_selection)
+artist_id = result["id"]
+songs = get_songs_by_artist(token, artist_id)
 
 
-    if st.button("Get Artist Recommendation:"):
+if st.button("Get Artist Recommendation:"):
         st.write("Here are some Recommendation:")
         num_columns = 4
         cols = st.columns(num_columns)
         for idx, song in enumerate(songs):
             with cols[idx % num_columns]:
                 st.image(song['image_url'], width=500)
-                st.markdown(f"<p style='text-align:center; font-size:18px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: white'><b>{song['name']}</b></p>", unsafe_allow_html=True)
-            # col1, col2 = st.columns([1,4])
-            # with col1:
-            #     st.write(f"- {song['name']}")
-            # with col2:
-            #     st.image(song['image_url'],width=180)
+                st.markdown(f"<p style='text-align:center; font-size:18px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>", unsafe_allow_html=True)
 
+
+st.subheader("Song Recommendation:")
+song_name_selection = st.selectbox(
+        "Select a Song", songs_list['name'].values
+    )
+if st.button('Get Recommendation Songs'):
+        recommended_songs = song_recommendation(song_name_selection)
+        st.write("Here are some Recommendation:")
+        for i in recommended_songs:
+            st.write("*", i)
 
 
 st.markdown("<br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+
+
 
 
 st.subheader("👩‍💻 About the Developer")
