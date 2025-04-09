@@ -113,9 +113,11 @@ with col2:
         for track in json_result['tracks']:
             track_name = track['name']
             track_image = track['album']['images'][0]['url']
+            spotify_url= track['external_urls']['spotify']
             tracks_info.append({
                 'name': track_name,
-              'image_url': track_image
+              'image_url': track_image,
+              'spotify_url': spotify_url
         })
         return tracks_info
 
@@ -135,7 +137,7 @@ with col2:
         for idx, song in enumerate(songs):
             with cols[idx % num_columns]:
                 st.image(song['image_url'], width=500)
-                st.write(f"**{song['name']}**")
+                st.markdown(f"<p style='text-align:center; font-size:18px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: white'><b>{song['name']}</b></p>", unsafe_allow_html=True)
             # col1, col2 = st.columns([1,4])
             # with col1:
             #     st.write(f"- {song['name']}")
