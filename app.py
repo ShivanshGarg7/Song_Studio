@@ -35,16 +35,17 @@ def get_auth_header(token):
     return {"Authorization": "Bearer " + token}
 
 
+def fetch_poster_for_song(token, song_id):
+     url = f"https://api.spotify.com/v1/tracks/{song_id}?country=US"
+     headers = get_auth_header(token)
+     result = get(url, headers=headers)
+     json_result = json.loads(result.content)
+     poster_url = json_result['album']["images"][0]["url"]
+     spotify_url = json_result['external_urls']['spotify']
 
-def song_recommendation(song_name):
-    song_index = songs_list[songs_list['name'] == song_name].index[0]
-    gapping = similar[song_index]
-    songs_listing = sorted(list(enumerate(gapping)),reverse=True, key=lambda x:x[1])[1:11]
-    
-    recommended_song = []
-    for i in songs_listing:
-        recommended_song.append(songs_list['name'].iloc[i[0]])
-    return recommended_song
+     return poster_url, spotify_url
+
+
 
 
 songs_list_dict = pickle.load(open('song_list_dict.pkl', 'rb'))
@@ -110,6 +111,23 @@ def get_songs_by_artist(token, artist_id):
         return tracks_info
 
 
+def song_recommendation(song_name):
+    song_index = songs_list[songs_list['name'] == song_name].index[0]
+    gapping = similar[song_index]
+    songs_listing = sorted(list(enumerate(gapping)),reverse=True, key=lambda x:x[1])[1:11]
+    recommended_song = []
+    for i in songs_listing:
+        song_id = songs_list.iloc[i[0]]["spotify_id"]
+        poster, url = fetch_poster_for_song(get_token(), song_id)
+        recommended_song.append({
+             "name": songs_list.iloc[i[0]]["name"],
+             "poster": poster,
+             'spotify_url': url,
+        })
+
+    return recommended_song
+
+
 
 token = get_token()
     
@@ -120,12 +138,12 @@ songs = get_songs_by_artist(token, artist_id)
 
 if st.button("Get Artist Recommendation:"):
         st.write("Here are some Recommendation:")
-        num_columns = 4
+        num_columns = 5
         cols = st.columns(num_columns)
         for idx, song in enumerate(songs):
             with cols[idx % num_columns]:
-                st.image(song['image_url'], width=500)
-                st.markdown(f"<p style='text-align:center; font-size:18px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>", unsafe_allow_html=True)
+                st.image(song['image_url'], width=300)
+                st.markdown(f"<p style='text-align:center; font-size:20px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>", unsafe_allow_html=True)
 
 
 st.subheader("Song Recommendation:")
@@ -135,8 +153,12 @@ song_name_selection = st.selectbox(
 if st.button('Get Recommendation Songs'):
         recommended_songs = song_recommendation(song_name_selection)
         st.write("Here are some Recommendation:")
-        for i in recommended_songs:
-            st.write("*", i)
+        num_columns = 5
+        cols = st.columns(num_columns)
+        for idx, song in enumerate(recommended_songs):
+            with cols[idx % num_columns]:
+                st.image(song['poster'], width = 300)
+                st.markdown(f"<p style='text-align:center; font-size:20px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>", unsafe_allow_html=True)
 
 
 st.markdown("<br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
