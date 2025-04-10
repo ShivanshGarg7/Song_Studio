@@ -137,14 +137,30 @@ songs = get_songs_by_artist(token, artist_id)
 
 
 if st.button("Get Artist Recommendation:"):
-        st.write("Here are some Recommendation:")
         num_columns = 5
         cols = st.columns(num_columns)
         for idx, song in enumerate(songs):
             with cols[idx % num_columns]:
-                st.image(song['image_url'], width=300)
-                st.markdown(f"<p style='text-align:center; font-size:20px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>", unsafe_allow_html=True)
+                st.markdown(f"""
+                <style>
+                .hover-effect img {{
+                    transition: transform 0.3s ease;
+                    border-radius: 12px;
+                }}
+                .hover-effect img:hover {{
+                    transform: scale(1.05);
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                }}
+                </style>
+                <div class='hover-effect'>
+                    <a href='{song['spotify_url']}' target='_blank'>
+                        <img src='{song['image_url']}' width='100%'>
+                    </a>
+                </div>
+                <p style='text-align:center; margin-top:8px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>""", unsafe_allow_html=True)
 
+
+st.markdown("<br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 
 st.subheader("Song Recommendation:")
 song_name_selection = st.selectbox(
@@ -152,13 +168,27 @@ song_name_selection = st.selectbox(
     )
 if st.button('Get Recommendation Songs'):
         recommended_songs = song_recommendation(song_name_selection)
-        st.write("Here are some Recommendation:")
         num_columns = 5
         cols = st.columns(num_columns)
         for idx, song in enumerate(recommended_songs):
             with cols[idx % num_columns]:
-                st.image(song['poster'], width = 300)
-                st.markdown(f"<p style='text-align:center; font-size:20px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>", unsafe_allow_html=True)
+                st.markdown(f"""
+            <style>
+            .hover-effect img {{
+                transition: transform 0.3s ease;
+                border-radius: 12px;
+            }}
+            .hover-effect img:hover {{
+                transform: scale(1.05);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }}
+            </style>
+            <div class='hover-effect'>
+                <a href='{song['spotify_url']}' target='_blank'>
+                    <img src='{song['poster']}' width='100%'>
+                </a>
+            </div>
+            <p style='text-align:center; margin-top:8px'><a href='{song['spotify_url']}' target='_blank' style='text-decoration:none; color: inherit'><b>{song['name']}</b></p>""", unsafe_allow_html=True)
 
 
 st.markdown("<br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
